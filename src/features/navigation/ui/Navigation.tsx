@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, type MouseEvent } from "react";
 import Link from "next/link";
 import { navLinks, siteConfig } from "@/shared/constants/site";
 import { cn } from "@/shared/lib/cn";
+import { smoothScrollToHash } from "@/shared/lib/smoothScroll";
 import { Button } from "@/shared/ui/Button";
 import { Container } from "@/shared/ui/Container";
 
@@ -18,6 +19,17 @@ function getScrolledSnapshot(): boolean {
 
 function getScrolledServerSnapshot(): boolean {
   return false;
+}
+
+function handleNavClick(
+  event: MouseEvent<HTMLAnchorElement>,
+  href: string,
+  onAfter?: () => void,
+) {
+  if (!href.startsWith("#")) return;
+  event.preventDefault();
+  smoothScrollToHash(href);
+  onAfter?.();
 }
 
 export function Navigation() {
@@ -50,7 +62,9 @@ export function Navigation() {
         <Link
           href="#hero"
           className="font-display text-sm font-medium tracking-[0.18em] text-foreground uppercase transition-colors hover:text-accent"
-          onClick={() => setOpen(false)}
+          onClick={(event) => {
+            handleNavClick(event, "#hero", () => setOpen(false));
+          }}
         >
           {siteConfig.shortName}
         </Link>
@@ -61,11 +75,17 @@ export function Navigation() {
               key={link.href}
               href={link.href}
               className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase transition-colors hover:text-foreground"
+              onClick={(event) => handleNavClick(event, link.href)}
             >
               {link.label}
             </a>
           ))}
-          <Button href="#contact" size="sm" variant="ghost">
+          <Button
+            href="#contact"
+            size="sm"
+            variant="ghost"
+            onClick={(event) => handleNavClick(event, "#contact")}
+          >
             Start a project
           </Button>
         </nav>
@@ -115,7 +135,9 @@ export function Navigation() {
               key={link.href}
               href={link.href}
               className="border-b border-border py-3 font-mono text-xs tracking-[0.18em] text-muted uppercase transition-colors hover:text-foreground"
-              onClick={() => setOpen(false)}
+              onClick={(event) =>
+                handleNavClick(event, link.href, () => setOpen(false))
+              }
             >
               {link.label}
             </a>
@@ -123,7 +145,9 @@ export function Navigation() {
           <Button
             href="#contact"
             className="mt-3 w-full"
-            onClick={() => setOpen(false)}
+            onClick={(event) =>
+              handleNavClick(event, "#contact", () => setOpen(false))
+            }
           >
             Start a project
           </Button>

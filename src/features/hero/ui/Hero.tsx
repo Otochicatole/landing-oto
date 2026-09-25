@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 import { heroContent } from "@/features/hero/constants/content";
 import { clamp01, heroZoomProgress } from "@/features/hero/lib/scrollZoom";
 import { HeroBackground } from "@/features/hero/ui/HeroBackground";
 import { HeroMeta } from "@/features/hero/ui/HeroMeta";
+import { smoothScrollToHash } from "@/shared/lib/smoothScroll";
 import { Button } from "@/shared/ui/Button";
 import { Container } from "@/shared/ui/Container";
 
@@ -65,10 +66,25 @@ export function Hero() {
               </p>
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
-                <Button href={heroContent.primaryCta.href}>
+                <Button
+                  href={heroContent.primaryCta.href}
+                  onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+                    if (!heroContent.primaryCta.href.startsWith("#")) return;
+                    event.preventDefault();
+                    smoothScrollToHash(heroContent.primaryCta.href);
+                  }}
+                >
                   {heroContent.primaryCta.label}
                 </Button>
-                <Button href={heroContent.secondaryCta.href} variant="line">
+                <Button
+                  href={heroContent.secondaryCta.href}
+                  variant="line"
+                  onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+                    if (!heroContent.secondaryCta.href.startsWith("#")) return;
+                    event.preventDefault();
+                    smoothScrollToHash(heroContent.secondaryCta.href);
+                  }}
+                >
                   {heroContent.secondaryCta.label}
                 </Button>
               </div>
