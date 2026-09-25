@@ -65,6 +65,7 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
+    const veil = root.querySelector<HTMLElement>("[data-hero-veil]");
 
     const sync = () => {
       const hero = document.getElementById("hero");
@@ -78,6 +79,11 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
 
       root.style.opacity = String(opacity);
       root.style.visibility = opacity < 0.02 ? "hidden" : "visible";
+
+      // Readability veil clears with the copy — gone once letters leave
+      if (veil) {
+        veil.style.opacity = String(1 - clamp01(progress / 0.28));
+      }
 
       postBlackhole({
         yaw: progress * Math.PI * 0.35,
@@ -126,6 +132,12 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
       ) : (
         <div className="absolute inset-0 bg-black" />
       )}
+
+      {/* Soft dark layer so hero copy stays readable over the accretion disk */}
+      <div
+        data-hero-veil
+        className="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_20%_75%,rgb(0_0_0/0.82)_0%,rgb(0_0_0/0.55)_40%,rgb(0_0_0/0.2)_65%,transparent_85%)]"
+      />
     </div>
   );
 }
