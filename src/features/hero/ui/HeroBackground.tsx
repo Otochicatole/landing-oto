@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { cn } from "@/shared/lib/cn";
 
 type HeroBackgroundProps = {
@@ -34,6 +34,7 @@ function getServerMounted(): boolean {
 }
 
 export function HeroBackground({ className }: HeroBackgroundProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const mounted = useSyncExternalStore(
     subscribeNothing,
     getClientMounted,
@@ -45,29 +46,54 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
     getReducedMotionServerSnapshot,
   );
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const update = () => {
+      const hero = document.getElementById("hero");
+      const height = hero?.offsetHeight ?? window.innerHeight;
+      const fadeStart = height * 0.35;
+      const fadeEnd = height * 0.95;
+      const y = window.scrollY;
+      let next = 1;
+      if (y >= fadeEnd) next = 0;
+      else if (y > fadeStart) next = 1 - (y - fadeStart) / (fadeEnd - fadeStart);
+      root.style.opacity = String(next);
+      root.style.visibility = next < 0.01 ? "hidden" : "visible";
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   const showGalaxy = mounted && !reduceMotion;
 
   return (
     <div
+      ref={rootRef}
       aria-hidden
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden bg-black",
+        "pointer-events-none fixed inset-0 z-0 h-[100svh] w-full overflow-hidden",
         className,
       )}
     >
       {showGalaxy ? (
         <iframe
+          id="hero-galaxy-frame"
           src="/hero-galaxy/index.html"
           title=""
           tabIndex={-1}
           className="absolute inset-0 h-full w-full border-0"
         />
-      ) : (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#1a1028_0%,#050505_55%,#000_100%)]" />
-      )}
+      ) : null}
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(5_5_5/0.35)_0%,rgb(5_5_5/0.15)_40%,rgb(5_5_5/0.55)_70%,var(--background)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgb(5_5_5/0.45)_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-[45%] bg-[linear-gradient(to_bottom,transparent_0%,rgb(0_0_0/0.25)_40%,rgb(0_0_0/0.75)_75%,#000_100%)]" />
     </div>
   );
 }

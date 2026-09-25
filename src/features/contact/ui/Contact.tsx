@@ -71,7 +71,7 @@ export function Contact() {
           <Reveal delayMs={80} className="lg:col-span-7">
             <form
               onSubmit={onSubmit}
-              className="grid gap-4 border border-border p-5 sm:p-8"
+              className="grid gap-4 border border-border bg-background/55 p-5 backdrop-blur-[2px] sm:p-8"
               noValidate
             >
               <div className="grid gap-4 sm:grid-cols-2">

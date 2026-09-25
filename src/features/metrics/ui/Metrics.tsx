@@ -27,7 +27,7 @@ export function Metrics() {
 
         <dl className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
           {metricsContent.items.map((item, i) => (
-            <Reveal key={item.unit} delayMs={i * 40} className="bg-background">
+            <Reveal key={item.unit} delayMs={i * 40} className="bg-background/70 backdrop-blur-[2px]">
               <div className="flex h-full flex-col gap-3 p-6 sm:p-7">
                 <dt className="font-mono text-[10px] tracking-[0.2em] text-meta uppercase">
                   {item.unit}

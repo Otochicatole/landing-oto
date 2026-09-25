@@ -19,7 +19,7 @@ export function Section({
       id={id}
       aria-labelledby={ariaLabelledBy}
       className={cn(
-        "relative scroll-mt-24 border-t border-border py-20 sm:py-28 lg:py-32",
+        "relative scroll-mt-24 border-t border-border bg-background/15 py-20 sm:py-28 lg:py-32",
         className,
       )}
     >

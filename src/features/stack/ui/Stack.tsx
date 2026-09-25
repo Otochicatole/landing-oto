@@ -27,7 +27,7 @@ export function Stack() {
 
         <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
           {stackContent.groups.map((group, i) => (
-            <Reveal key={group.name} delayMs={i * 50} className="bg-background">
+            <Reveal key={group.name} delayMs={i * 50} className="bg-background/70 backdrop-blur-[2px]">
               <div className="flex h-full flex-col gap-5 p-5 sm:p-6">
                 <p className="font-mono text-[10px] tracking-[0.22em] text-meta uppercase">
                   {group.name}

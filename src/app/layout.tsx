@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { SiteStarfield } from "@/features/starfield/ui/SiteStarfield";
 import { siteConfig } from "@/shared/constants/site";
 import "./globals.css";
 
@@ -91,7 +92,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="relative flex min-h-full flex-col bg-transparent text-foreground">
         <a
           href="#hero"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[100] focus:border focus:border-border focus:bg-background focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:tracking-[0.16em] focus:text-foreground focus:uppercase"
@@ -99,7 +100,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <JsonLd />
-        {children}
+        <SiteStarfield />
+        <div className="relative z-[1] flex min-h-full flex-1 flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

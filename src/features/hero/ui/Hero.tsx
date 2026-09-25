@@ -9,7 +9,7 @@ export function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-24"
+      className="relative z-[1] flex min-h-[100svh] flex-col justify-end overflow-visible pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-24"
     >
       <HeroBackground />
 

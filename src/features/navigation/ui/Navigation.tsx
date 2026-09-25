@@ -42,7 +42,7 @@ export function Navigation() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-300",
         scrolled || open
-          ? "border-border bg-background/80 backdrop-blur-md"
+          ? "border-border bg-background/55 backdrop-blur-md"
           : "border-transparent bg-transparent",
       )}
     >
