@@ -30,16 +30,6 @@ function subscribeNothing(): () => void {
   return () => undefined;
 }
 
-function broadcastPerspective(yaw: number, pitch: number, progress: number) {
-  const frame = document.getElementById(
-    "hero-galaxy-frame",
-  ) as HTMLIFrameElement | null;
-  frame?.contentWindow?.postMessage(
-    { type: "otochi-perspective", yaw, pitch, progress },
-    window.location.origin,
-  );
-}
-
 export function SiteStarfield({ className }: SiteStarfieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = useSyncExternalStore(
@@ -67,13 +57,12 @@ export function SiteStarfield({ className }: SiteStarfieldProps) {
     let currentPitch = 0.2;
 
     const syncPerspective = () => {
-      const { yaw, pitch, progress } = perspectiveFromScroll(
+      const { yaw, pitch } = perspectiveFromScroll(
         window.scrollY,
         maxScrollDistance(),
       );
       targetYaw = yaw;
       targetPitch = pitch;
-      broadcastPerspective(yaw, pitch, progress);
     };
 
     const tick = () => {
@@ -95,20 +84,12 @@ export function SiteStarfield({ className }: SiteStarfieldProps) {
       }
     };
 
-    const onMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "otochi-galaxy-ready") {
-        syncPerspective();
-      }
-    };
-
     syncPerspective();
     scene.resize();
     frameId = requestAnimationFrame(tick);
 
     window.addEventListener("scroll", syncPerspective, { passive: true });
     window.addEventListener("resize", scene.resize);
-    window.addEventListener("message", onMessage);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
@@ -116,7 +97,6 @@ export function SiteStarfield({ className }: SiteStarfieldProps) {
       cancelAnimationFrame(frameId);
       window.removeEventListener("scroll", syncPerspective);
       window.removeEventListener("resize", scene.resize);
-      window.removeEventListener("message", onMessage);
       document.removeEventListener("visibilitychange", onVisibility);
       scene.dispose();
     };

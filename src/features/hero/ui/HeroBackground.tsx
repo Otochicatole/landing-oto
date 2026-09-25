@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
+import {
+  clamp01,
+  easeInCubic,
+  heroZoomProgress,
+  radiusFromZoom,
+} from "@/features/hero/lib/scrollZoom";
 import { cn } from "@/shared/lib/cn";
 
 type HeroBackgroundProps = {
@@ -33,6 +39,16 @@ function getServerMounted(): boolean {
   return false;
 }
 
+function postGalaxy(payload: Record<string, number>) {
+  const frame = document.getElementById(
+    "hero-galaxy-frame",
+  ) as HTMLIFrameElement | null;
+  frame?.contentWindow?.postMessage(
+    { type: "otochi-perspective", ...payload },
+    window.location.origin,
+  );
+}
+
 export function HeroBackground({ className }: HeroBackgroundProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const mounted = useSyncExternalStore(
@@ -50,25 +66,41 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
     const root = rootRef.current;
     if (!root) return;
 
-    const update = () => {
+    const sync = () => {
       const hero = document.getElementById("hero");
-      const height = hero?.offsetHeight ?? window.innerHeight;
-      const fadeStart = height * 0.35;
-      const fadeEnd = height * 0.95;
-      const y = window.scrollY;
-      let next = 1;
-      if (y >= fadeEnd) next = 0;
-      else if (y > fadeStart) next = 1 - (y - fadeStart) / (fadeEnd - fadeStart);
-      root.style.opacity = String(next);
-      root.style.visibility = next < 0.01 ? "hidden" : "visible";
+      if (!hero) return;
+
+      const progress = heroZoomProgress(hero);
+      const zoom = easeInCubic(progress);
+      // Hold full opacity until deep inside the black hole, then snap-fade out
+      const fade = clamp01((progress - 0.78) / 0.22);
+      const opacity = 1 - fade;
+
+      root.style.opacity = String(opacity);
+      root.style.visibility = opacity < 0.02 ? "hidden" : "visible";
+
+      postGalaxy({
+        yaw: progress * Math.PI * 0.35,
+        pitch: 0.28 - progress * 0.12,
+        radius: radiusFromZoom(progress),
+        zoom,
+        progress,
+      });
     };
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === "otochi-galaxy-ready") sync();
+    };
+
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    window.addEventListener("message", onMessage);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("message", onMessage);
     };
   }, []);
 
@@ -79,7 +111,7 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
       ref={rootRef}
       aria-hidden
       className={cn(
-        "pointer-events-none fixed inset-0 z-0 h-[100svh] w-full overflow-hidden",
+        "pointer-events-none absolute inset-0 z-0 overflow-hidden",
         className,
       )}
     >
@@ -91,9 +123,9 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
           tabIndex={-1}
           className="absolute inset-0 h-full w-full border-0"
         />
-      ) : null}
-
-      <div className="absolute inset-x-0 bottom-0 h-[45%] bg-[linear-gradient(to_bottom,transparent_0%,rgb(0_0_0/0.25)_40%,rgb(0_0_0/0.75)_75%,#000_100%)]" />
+      ) : (
+        <div className="absolute inset-0 bg-black" />
+      )}
     </div>
   );
 }
