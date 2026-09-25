@@ -39,9 +39,9 @@ function getServerMounted(): boolean {
   return false;
 }
 
-function postGalaxy(payload: Record<string, number>) {
+function postBlackhole(payload: Record<string, number>) {
   const frame = document.getElementById(
-    "hero-galaxy-frame",
+    "hero-blackhole-frame",
   ) as HTMLIFrameElement | null;
   frame?.contentWindow?.postMessage(
     { type: "otochi-perspective", ...payload },
@@ -79,7 +79,7 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
       root.style.opacity = String(opacity);
       root.style.visibility = opacity < 0.02 ? "hidden" : "visible";
 
-      postGalaxy({
+      postBlackhole({
         yaw: progress * Math.PI * 0.35,
         pitch: 0.28 - progress * 0.12,
         radius: radiusFromZoom(progress),
@@ -90,7 +90,7 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
 
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "otochi-galaxy-ready") sync();
+      if (event.data?.type === "otochi-blackhole-ready") sync();
     };
 
     sync();
@@ -104,7 +104,7 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
     };
   }, []);
 
-  const showGalaxy = mounted && !reduceMotion;
+  const showBlackhole = mounted && !reduceMotion;
 
   return (
     <div
@@ -115,10 +115,10 @@ export function HeroBackground({ className }: HeroBackgroundProps) {
         className,
       )}
     >
-      {showGalaxy ? (
+      {showBlackhole ? (
         <iframe
-          id="hero-galaxy-frame"
-          src="/hero-galaxy/index.html"
+          id="hero-blackhole-frame"
+          src="/hero-blackhole/index.html"
           title=""
           tabIndex={-1}
           className="absolute inset-0 h-full w-full border-0"

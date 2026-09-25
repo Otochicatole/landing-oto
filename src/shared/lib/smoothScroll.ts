@@ -8,7 +8,7 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia(REDUCED_MOTION_QUERY).matches;
 }
 
-/** Duration scales with distance so the galaxy zoom can be read clearly. */
+/** Duration scales with distance so the black hole zoom can be read clearly. */
 function durationForDistance(distancePx: number): number {
   const ms = Math.abs(distancePx) * 1.15;
   return Math.min(4800, Math.max(2200, ms));

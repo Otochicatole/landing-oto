@@ -3,7 +3,7 @@
   const BASE_PITCH = 0.35;
 
   function applyPerspective(yaw, pitch, radius) {
-    const experience = window.__otochiGalaxy;
+    const experience = window.__otochiBlackhole;
     if (!experience || !experience.camera) return;
 
     const camera =
@@ -40,7 +40,7 @@
 
   try {
     window.parent.postMessage(
-      { type: "otochi-galaxy-ready" },
+      { type: "otochi-blackhole-ready" },
       window.location.origin,
     );
   } catch {

@@ -77,7 +77,7 @@ function createStarGeometry(): BufferGeometry {
     positions[i3 + 1] = Math.sin(phi) * Math.sin(theta) * radius;
     positions[i3 + 2] = Math.cos(phi) * radius;
 
-    // Multicolor field — same spirit as the galaxy star shell
+    // Multicolor field — same spirit as the black hole star shell
     const roll = Math.random();
     if (roll > 0.55) {
       // Full spectrum saturated stars
@@ -86,7 +86,7 @@ function createStarGeometry(): BufferGeometry {
       // Cool blues / cyans
       color.setHSL(0.55 + Math.random() * 0.12, 0.7 + Math.random() * 0.3, 0.65 + Math.random() * 0.25);
     } else if (roll > 0.12) {
-      // Warm pinks / magentas (galaxy accent)
+      // Warm pinks / magentas (black hole accent)
       color.setHSL(0.9 + Math.random() * 0.08, 0.7 + Math.random() * 0.3, 0.62 + Math.random() * 0.28);
     } else {
       // Hot white-gold highlights
